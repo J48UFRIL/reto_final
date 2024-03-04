@@ -21,9 +21,16 @@ class ProductionConfig(Config):
     # Add other production configurations here
 
 
+class TestConfig:
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI", "sqlite:///:memory:")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
 # Dictionary to map environment names to configuration classes
 config_dict = {
     "development": DevelopmentConfig,
     "production": ProductionConfig,
+    "test": TestConfig,
     # Add other environments if needed
 }
