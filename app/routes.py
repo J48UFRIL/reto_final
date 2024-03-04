@@ -5,6 +5,11 @@ from app import db
 data_routes = Blueprint("data_routes", __name__)
 
 
+@data_routes.route("/")
+def home():
+    return "<h1>Welcome Home</h1>"
+
+
 @data_routes.route("/data", methods=["POST"])
 def insert_data():
     data = request.json  # Assuming JSON data is sent for insertion
