@@ -1,9 +1,14 @@
-version: '3.8'
+---
+version: "3"
 
 services:
   app:
+    depends_on:
+      - db
+    links:
+      - db
     build:
-      dockerfile: ./Dockerfile
+      dockerfile: devops/Dockerfile
       context: ../
     ports:
       - "5000:5000"
@@ -11,15 +16,11 @@ services:
       - FLASK_APP=app
       - FLASK_ENV=development
       - DATABASE_URI=postgresql://myuser:mypassword@db/mydatabase
-    depends_on:
-      - db
-    links:
-      - db
 
   db:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - "6379:6379"
     environment:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: myuser
