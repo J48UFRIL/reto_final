@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_IMAGE_NAME = 'j48ufril/reto_final'
+        registryCredential = 'dockerhub_id'
+    }
+    stages {
+        stage('Pre-package') {
+            parallel {
+                stage('Validation') {
+                    stages {
+                        stage('Install Dependencies') {
+                            steps {
+                                script {
+                                    def img = 'python:3.10'
+                                    docker.image(img).run()
+                                }
+                                dir('C:\\Users\\javie\\Proyecto\\reto_final') {
+                                    bat 'C:\\Users\\javie\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pip install -r requirements.txt'
+                                }
+                            }
+                        }
+                        stage('Run Flake8') {
+                            steps {
+                                dir('C:\\Users\\javie\\Proyecto\\reto_final') {
+                                    bat 'C:\\Users\\javie\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flake8'
+                                }
+                            }
+                        }
+                        stage('Run Unit Tests with Coverage') {
+                            steps {
+                                dir('C:\\Users\\javie\\Proyecto\\reto_final') {
+                                    bat 'C:\\Users\\javie\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\coverage run --source=app -m unittest discover -s tests'
+                                    bat 'C:\\Users\\javie\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\coverage report -m'
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Build Image') {
+                    steps {
+                        dir('C:\\Users\\javie\\Proyecto\\reto_final\\devops') {
+                            bat "docker build --tag ${DOCKER_IMAGE_NAME} -f Dockerfile .."
+                        }
+                    }
+                }
+            }
+        }
+        stage('Uploading Image') {
+            when {
+                anyOf {
+                    branch 'develop'
+                    branch 'master'
+                    branch 'main'
+                }
+            }
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        docker.image("${DOCKER_IMAGE_NAME}").push("latest")
+                    }
+                }
+            }
+        }
+    }
+}
