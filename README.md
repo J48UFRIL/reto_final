@@ -21,3 +21,7 @@ curl -X DELETE http://tu-localhost:puerto/data/ID_A_ELIMINAR
 
 8. Para probar los tests
 python -m unittest tests/test_database.py
+
+9. Para ver la cobertura
+coverage run --source=app -m unittest discover -s tests
+coverage report -m
