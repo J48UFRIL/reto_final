@@ -25,3 +25,34 @@ python -m unittest tests/test_database.py
 9. Para ver la cobertura
 coverage run --source=app -m unittest discover -s tests
 coverage report -m
+
+
+
+Creación de Pipeline de CI
+
+1. Jenkins:
+- Crear un nuevo Pipeline.
+- En "Build Triggers" marcar la casilla "GitHub hook trigger for GITScm polling"
+- En la sección "Pipeline":
+    - Seleccionar "Pipeline script from SCM" y seleccione "Git" como SCM.
+    - Ingresar la URL del repositorio y configure las credenciales. (Si es público el repositorio no hace falta declarar credenciales)
+    - En "Branches to build" poner "*/main"
+    - En "Script Path" poner la ruta hacia Jenkinsfile.
+    - Guardar configuración.
+
+2. Ngrok (Windows):
+- Crear cuenta o iniciar sesión en ngrok
+- Instalar ngrok
+- Ejecutar el siguiente comando para agregar el authtoken al ngrok.yml
+  ngrok config add-authtoken "tu_Authtoken"
+- Desplegrar ngrok:
+  ngrok http http://localhost:8080
+- Copiar la URL pública generada.
+
+3. GitHub
+- Crear un nuevo Webhook en el repositorio de GitHub
+- Poner la URL de ngrok en "Payload URL" seguido de "github-webhook/":
+  Ejemplo: https://0f3f-188-78-186-22.ngrok-free.app/github-webhook/
+- En "Content type" seleccionar la opción "aplication/json"
+- En "Which events would you like to trigger this webhook?" seleccionar "Just the push event"
+- Guardar el Webhook.
