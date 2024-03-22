@@ -24,8 +24,6 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  metadata_startup_script = "sudo apt-get update && sudo apt -y install python3-pip && sudo apt-get install -y git && git clone https://github.com/J48UFRIL/reto_final.git"
-
   network_interface {
     network = "default"
     access_config {}
